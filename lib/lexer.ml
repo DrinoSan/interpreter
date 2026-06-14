@@ -34,6 +34,13 @@ let rec next_token lexer =
       in
       (lexer, Some token)
 
+and skip_whitespace lexer =
+  let lexer, _ =
+    seek lexer (fun ch ->
+        match ch with Some ch -> Char.is_whitespace ch | None -> false)
+  in
+  lexer
+
 and if_peeked lexer ch ~default ~matched =
   let lexer, result =
     match peek_char lexer with
@@ -66,16 +73,10 @@ and peek_char lexer =
   if lexer.position >= String.length lexer.input - 1 then None
   else Some (String.get lexer.input (lexer.position + 1))
 
-and skip_whitespace lexer =
-  let lexer, _ =
-    seek lexer (fun ch ->
-        match ch with Some ch -> Char.is_whitespace ch | None -> false)
-  in
-  lexer
-
 and seek lexer condition =
   let rec loop lexer =
-    if condition lexer.ch then loop (advance lexer) else lexer
+    (* This could also maybe look nice with lexer |> advance |> loop *)
+    if condition lexer.ch then loop (advance lexer) else lexer 
   in
   let lexer = loop lexer in
   (lexer, lexer.position)
