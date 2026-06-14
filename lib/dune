@@ -2,4 +2,4 @@
  (name code)
  (libraries base fmt)
  (preprocess (pps ppx_deriving.show))
- (modules token lexer))
+ (modules token lexer ast parser))
